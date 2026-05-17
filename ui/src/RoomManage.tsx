@@ -18,9 +18,9 @@ import {authModeToRoomMode, UseConfig} from './useConfig';
 import {LoginForm} from './LoginForm';
 
 const CreateRoom = ({room, config}: Pick<UseRoom, 'room'> & {config: UIConfig}) => {
-    const [id, setId] = React.useState(() => getRoomFromURL() ?? config.roomName);
+    const [id, setId] = React.useState(() => getRoomFromURL() ?? "");
     const mode = authModeToRoomMode(config.authMode, config.loggedIn);
-    const [ownerLeave, setOwnerLeave] = React.useState(config.closeRoomWhenOwnerLeaves);
+    const [ownerLeave, setOwnerLeave] = React.useState(false);
     const submit = () =>
         room({
             type: 'create',
@@ -38,10 +38,17 @@ const CreateRoom = ({room, config}: Pick<UseRoom, 'room'> & {config: UIConfig}) 
                     fullWidth
                     value={id}
                     onChange={(e) => setId(e.target.value)}
-                    label="id"
-                    margin="dense"
+                    label="Room Name"
+                    margin="normal"
+                    autoFocus
+                    onKeyDown={(event) => {
+                        if (event.code.toLowerCase().includes("enter")) {
+                            submit()
+                        }
+                    }}
+                    sx={{paddingBottom: 1}}
                 />
-                <FormControlLabel
+                {/* <FormControlLabel
                     control={
                         <Checkbox
                             checked={ownerLeave}
@@ -49,8 +56,8 @@ const CreateRoom = ({room, config}: Pick<UseRoom, 'room'> & {config: UIConfig}) 
                         />
                     }
                     label="Close Room after you leave"
-                />
-                <Box sx={{paddingBottom: 0.5}}>
+                /> */}
+                {/* <Box sx={{paddingBottom: 0.5}}>
                     <Typography>
                         Nat Traversal via:{' '}
                         <Link
@@ -61,10 +68,11 @@ const CreateRoom = ({room, config}: Pick<UseRoom, 'room'> & {config: UIConfig}) 
                             {mode.toUpperCase()}
                         </Link>
                     </Typography>
-                </Box>
+                </Box> */}
                 <Button onClick={submit} fullWidth variant="contained">
-                    Create or Join a Room
+                    Join Room
                 </Button>
+                <Typography sx={{paddingTop: 1, opacity: 0.5, textAlign: 'right'}}>mode: {mode}</Typography>
             </FormControl>
         </div>
     );
@@ -80,14 +88,12 @@ export const RoomManage = ({room, config}: {room: FCreateRoom; config: UseConfig
         <Grid
             container={true}
             sx={{justifyContent: 'center'}}
-            style={{paddingTop: 50, maxWidth: 400, width: '100%', margin: '0 auto'}}
+            style={{paddingTop: 20, maxWidth: 400, width: '100%', margin: 'auto auto', height: '100%'}}
             spacing={4}
         >
-            <Grid size={12}>
-                <Typography align="center" gutterBottom>
-                    <img src="./logo.svg" style={{width: 230}} alt="logo" />
-                </Typography>
-                <Paper elevation={3} style={{padding: 20}}>
+            <div 
+            style={{  width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'stretch', height: '100%'}}>
+                <Paper elevation={3} style={{padding: 20, width: '100%'}}>
                     {loginVisible ? (
                         <LoginForm
                             config={config}
@@ -95,7 +101,7 @@ export const RoomManage = ({room, config}: {room: FCreateRoom; config: UseConfig
                         />
                     ) : (
                         <>
-                            <Typography style={{display: 'flex', alignItems: 'center'}}>
+                            {/* <Typography style={{display: 'flex', alignItems: 'center'}}>
                                 <span style={{flex: 1}}>Hello {config.user}!</span>{' '}
                                 {config.loggedIn ? (
                                     <Button variant="outlined" size="small" onClick={config.logout}>
@@ -110,16 +116,15 @@ export const RoomManage = ({room, config}: {room: FCreateRoom; config: UseConfig
                                         Login
                                     </Button>
                                 )}
-                            </Typography>
+                            </Typography> */}
 
                             <CreateRoom room={room} config={config} />
                         </>
                     )}
                 </Paper>
-            </Grid>
+            </div>
             <div style={{position: 'absolute', margin: '0 auto', bottom: 0}}>
-                Screego {config.version} |{' '}
-                <Link href="https://github.com/screego/server/">GitHub</Link>
+                Screego | <Link href="https://github.com/screego/server/">GitHub</Link>
             </div>
         </Grid>
     );

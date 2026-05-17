@@ -1,12 +1,15 @@
 import React, {useCallback} from 'react';
-import {Badge, Box, IconButton, Paper, Tooltip, Typography, Slider, Stack} from '@mui/material';
+import {Badge, Box, IconButton, Paper, Tooltip, Typography, Slider, Stack, Button, Divider} from '@mui/material';
 import CancelPresentationIcon from '@mui/icons-material/CancelPresentation';
 import PresentToAllIcon from '@mui/icons-material/PresentToAll';
+import CastIcon from '@mui/icons-material/Cast';
 import FullScreenIcon from '@mui/icons-material/Fullscreen';
 import PeopleIcon from '@mui/icons-material/People';
 import VolumeMuteIcon from '@mui/icons-material/VolumeOff';
 import VolumeIcon from '@mui/icons-material/VolumeUp';
 import SettingsIcon from '@mui/icons-material/Settings';
+import StopIcon from '@mui/icons-material/Stop';
+import LogoutIcon from '@mui/icons-material/Logout';
 import {useHotkeys} from 'react-hotkeys-hook';
 import {Video} from './Video';
 import {makeStyles} from 'tss-react/mui';
@@ -15,6 +18,7 @@ import {useSnackbar} from 'notistack';
 import {RoomUser} from './message';
 import {useSettings, VideoDisplayMode} from './settings';
 import {SettingDialog} from './SettingDialog';
+import { getFromURL } from './useRoomID';
 
 const HostStream: unique symbol = Symbol('mystream');
 
@@ -53,6 +57,16 @@ const requestFullscreen = (element: FullScreenHTMLVideoElement | null) => {
     }
 };
 
+const images = [
+    ["tino-rischawy-n89lLdDUBM4-unsplash.jpg", "Tino Rischawy"],
+    ["declan-sun-yvfs-glPFgY-unsplash.jpg", "Declan Sun"],
+    ["joel-holland-TRhGEGdw-YY-unsplash.jpg", "Joel Holland"],
+    ["ryuta-AoIXSTI9yT8-unsplash.jpg", "Ryuta"],
+    ["sam-ferrara-1527pjeb6jg-unsplash.jpg", "Sam Ferrara"],
+    ["luke-robinson-esOlM9F7KM0-unsplash.jpg", "Luke Robinson"],
+    ["jeffrey-hamilton-JtVyK2Sej2I-unsplash.jpg", "Jeffrey Hamilton"],
+];
+
 export const Room = ({
     state,
     share,
@@ -72,6 +86,7 @@ export const Room = ({
     const [hoverControl, setHoverControl] = React.useState(false);
     const [selectedStream, setSelectedStream] = React.useState<string | typeof HostStream>();
     const [videoElement, setVideoElement] = React.useState<FullScreenHTMLVideoElement | null>(null);
+    const [imageIndex, setImageIndex] = React.useState(Math.floor(Math.random() * images.length))
 
     useShowOnMouseMovement(setShowControl);
 
@@ -91,6 +106,7 @@ export const Room = ({
         setSelectedStream(state.clientStreams[0]?.id);
     }, [state.clientStreams, selectedStream, state.hostStream]);
 
+    const create = getFromURL("create") === "true"
     const stream =
         selectedStream === HostStream
             ? state.hostStream
@@ -127,6 +143,10 @@ export const Room = ({
         }),
         [setHoverControl]
     );
+
+    const leaveRoom = () => {
+        location.href = "/"
+    }
 
     const controlVisible = showControl || open || hoverControl;
 
@@ -198,29 +218,26 @@ export const Room = ({
 
     return (
         <div className={classes.videoContainer}>
-            {controlVisible && (
-                <Paper className={classes.title} elevation={10} {...setHoverState}>
-                    <Tooltip title="Copy Link">
-                        <Typography
-                            variant="h4"
-                            component="h4"
-                            style={{cursor: 'pointer'}}
-                            onClick={copyLink}
-                        >
-                            {state.id}
-                        </Typography>
-                    </Tooltip>
+            {(!create) && (
+                <Paper className={classes.title} elevation={10} {...setHoverState} sx={{textAlign: "center"}}>
+                    <Typography
+                        variant="h4"
+                        component="h4"
+                    >
+                        {state.id}
+                    </Typography>
+                    <Button startIcon={<LogoutIcon />} onClick={leaveRoom}>Falschen Raum? Raum verlassen</Button>
                 </Paper>
             )}
 
-            {stream ? (
+            {(stream && create) ? (
                 <video
                     ref={setVideoElement}
                     className={videoClasses()}
                     onDoubleClick={handleFullscreen}
                 />
             ) : (
-                <Typography
+                !create ? <Typography
                     variant="h4"
                     align="center"
                     component="div"
@@ -231,11 +248,29 @@ export const Room = ({
                         transform: 'translate(-50%, -50%)',
                     }}
                 >
-                    no stream available
-                </Typography>
+                    {(!state.hostStream ? 
+                    <div>Du bist bereit, deinen Bildschirm freizugeben<br /><br />
+                                <Button key="start" onClick={share} size="large" variant="contained" color="success" startIcon={<CastIcon />}>
+                                    Bildschirm freigeben
+                                </Button><br></br><br></br><Button key="settings" onClick={() => setOpen(true)} startIcon={<SettingsIcon />}>Einstellungen</Button></div> : <div>Du teilst aktuell deinen Bildschirm.<br></br><br></br><Button key="stop" onClick={stopShare} variant="outlined" color="error" size="large" startIcon={<StopIcon />}>
+                                    Nicht mehr teilen
+                                </Button></div>)}
+                </Typography> : <div className={classes.idleDiv}>
+                    <img className={classes.idleBgImage} src={"/" + images[imageIndex][0]}></img>
+                    <div className={classes.idleAttribution}>Foto von {images[imageIndex][1]} auf Unsplash</div>
+                    <div className={classes.idleLeftSide}>
+                        <h1 className={classes.idleTitle}>Bereit für die Bildschirmfreigabe</h1>
+                        <Divider  />
+                                                <h2 className={classes.idleInstruction}>1. Öffne diese Seite</h2>
+                        <div className={classes.idleHost}>{location.host}</div>
+                        <h2 className={classes.idleInstruction}>2. Gib diesen Raumnamen ein</h2>
+                        <div className={classes.idleHost}>{state.id}</div>
+                        <h2 className={classes.idleInstruction}>3. Teilen!</h2>
+                    </div>
+                </div>
             )}
 
-            {controlVisible && (
+            {/* {(controlVisible && !create) && (
                 <Paper className={classes.control} elevation={10} {...setHoverState}>
                     {(stream?.getAudioTracks().length ?? 0) > 0 && videoElement && (
                         <AudioControl video={videoElement} />
@@ -290,7 +325,7 @@ export const Room = ({
                         </Tooltip>
                     </Box>
                 </Paper>
-            )}
+            )} */}
 
             <div className={classes.bottomContainer}>
                 {state.clientStreams
@@ -320,7 +355,7 @@ export const Room = ({
                             </Paper>
                         );
                     })}
-                {state.hostStream && selectedStream !== HostStream && (
+                {/* {state.hostStream && selectedStream !== HostStream && (
                     <Paper
                         elevation={4}
                         className={classes.smallVideoContainer}
@@ -336,7 +371,7 @@ export const Room = ({
                             You
                         </Typography>
                     </Paper>
-                )}
+                )} */}
                 <SettingDialog
                     open={open}
                     setOpen={setOpen}
@@ -413,6 +448,53 @@ const AudioControl = ({video}: {video: FullScreenHTMLVideoElement}) => {
 };
 
 const useStyles = makeStyles()(() => ({
+    idleDiv: {
+        width: "100%",
+        height: "100%",
+        position: 'relative'
+    },
+    idleBgImage: {
+        width: "100%",
+        height: "100%",
+        position: "absolute",
+        objectFit: "cover",
+    },
+    idleAttribution: {
+        position: "absolute",
+        right: "12px",
+        bottom: "12px",
+        padding: "4px 12px",
+        background: "rgba(0, 0, 0, 1)",
+        opacity: 0.6,
+        userSelect: "none"
+    },
+    idleLeftSide: {
+        position: 'absolute',
+        left: '0px',
+        top: '0px',
+        width: "35%",
+        height: "100%",
+        background: "rgba(0, 0, 0, .6)",
+        color: 'white',
+        padding: '16px 32px',
+        userSelect: "none",
+        backdropFilter: 'blur(8px)'
+    },
+    idleHost: {
+        border: '3px solid rgba(0, 0, 0, 0.7)',
+        borderRadius: "999px",
+        padding: "8px 24px",
+        fontSize: "28px",
+        fontWeight: "bold",
+        background: "rgba(0, 0, 0, 0.5)",
+        textAlign: 'center',
+    },
+    idleInstruction: {
+        fontSize: "1.8rem",
+    },
+    idleTitle: {
+        textAlign: 'center',
+    },
     title: {
         padding: 15,
         position: 'fixed',
