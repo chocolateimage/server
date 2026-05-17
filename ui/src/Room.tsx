@@ -252,7 +252,7 @@ export const Room = ({
                     <div>Du bist bereit, deinen Bildschirm freizugeben<br /><br />
                                 <Button key="start" onClick={share} size="large" variant="contained" color="success" startIcon={<CastIcon />}>
                                     Bildschirm freigeben
-                                </Button><br></br><br></br><Button key="settings" onClick={() => setOpen(true)} startIcon={<SettingsIcon />}>Einstellungen</Button></div> : <div>Du teilst aktuell deinen Bildschirm.<br></br><br></br><Button key="stop" onClick={stopShare} variant="outlined" color="error" size="large" startIcon={<StopIcon />}>
+                                </Button><br></br><br></br><Button key="settings" onClick={() => setOpen(true)} startIcon={<SettingsIcon />}>Einstellungen</Button></div> : <div>Aktuell teilst du deinen Bildschirm.<br></br><br></br><Button key="stop" onClick={stopShare} variant="outlined" color="error" size="large" startIcon={<StopIcon />}>
                                     Nicht mehr teilen
                                 </Button></div>)}
                 </Typography> : <div className={classes.idleDiv}>

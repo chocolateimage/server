@@ -34,11 +34,12 @@ const CreateRoom = ({room, config}: Pick<UseRoom, 'room'> & {config: UIConfig}) 
     return (
         <div>
             <FormControl fullWidth>
+                <Typography variant="h5" sx={{textAlign: 'center'}}>Raum beitreten</Typography>
                 <TextField
                     fullWidth
                     value={id}
                     onChange={(e) => setId(e.target.value)}
-                    label="Room Name"
+                    label="Raumname"
                     margin="normal"
                     autoFocus
                     onKeyDown={(event) => {
