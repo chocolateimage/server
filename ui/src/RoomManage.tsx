@@ -71,7 +71,7 @@ const CreateRoom = ({room, config}: Pick<UseRoom, 'room'> & {config: UIConfig}) 
                     </Typography>
                 </Box> */}
                 <Button onClick={submit} fullWidth variant="contained">
-                    Join Room
+                    Raum Beitreten
                 </Button>
                 <Typography sx={{paddingTop: 1, opacity: 0.5, textAlign: 'right'}}>mode: {mode}</Typography>
             </FormControl>
