@@ -1,10 +1,7 @@
 import React from 'react';
 import {
-    Box,
     Button,
-    Checkbox,
     FormControl,
-    FormControlLabel,
     Grid,
     Paper,
     TextField,
@@ -20,7 +17,7 @@ import {LoginForm} from './LoginForm';
 const CreateRoom = ({room, config}: Pick<UseRoom, 'room'> & {config: UIConfig}) => {
     const [id, setId] = React.useState(() => getRoomFromURL() ?? "");
     const mode = authModeToRoomMode(config.authMode, config.loggedIn);
-    const [ownerLeave, setOwnerLeave] = React.useState(false);
+    const [ownerLeave] = React.useState(false);
     const submit = () =>
         room({
             type: 'create',

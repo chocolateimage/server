@@ -45,7 +45,7 @@ export const SettingDialog = ({open, setOpen, updateName, saveSettings}: Setting
         setOpen(false);
     };
 
-    const {name, preferCodec, displayMode, framerate} = settingsInput;
+    const {preferCodec, displayMode, framerate} = settingsInput;
 
     return (
         <Dialog open={open} onClose={() => setOpen(false)} maxWidth={'xs'} fullWidth>

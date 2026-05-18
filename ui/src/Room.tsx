@@ -1,12 +1,6 @@
 import React, {useCallback} from 'react';
-import {Badge, Box, IconButton, Paper, Tooltip, Typography, Slider, Stack, Button, Divider} from '@mui/material';
-import CancelPresentationIcon from '@mui/icons-material/CancelPresentation';
-import PresentToAllIcon from '@mui/icons-material/PresentToAll';
+import {Paper, Typography, Button, Divider} from '@mui/material';
 import CastIcon from '@mui/icons-material/Cast';
-import FullScreenIcon from '@mui/icons-material/Fullscreen';
-import PeopleIcon from '@mui/icons-material/People';
-import VolumeMuteIcon from '@mui/icons-material/VolumeOff';
-import VolumeIcon from '@mui/icons-material/VolumeUp';
 import SettingsIcon from '@mui/icons-material/Settings';
 import StopIcon from '@mui/icons-material/Stop';
 import LogoutIcon from '@mui/icons-material/Logout';
@@ -15,29 +9,28 @@ import {Video} from './Video';
 import {makeStyles} from 'tss-react/mui';
 import {ConnectedRoom} from './useRoom';
 import {useSnackbar} from 'notistack';
-import {RoomUser} from './message';
 import {useSettings, VideoDisplayMode} from './settings';
 import {SettingDialog} from './SettingDialog';
 import { getFromURL } from './useRoomID';
 
 const HostStream: unique symbol = Symbol('mystream');
 
-const flags = (user: RoomUser) => {
-    const result: string[] = [];
-    if (user.you) {
-        result.push('You');
-    }
-    if (user.owner) {
-        result.push('Owner');
-    }
-    if (user.streaming) {
-        result.push('Streaming');
-    }
-    if (!result.length) {
-        return '';
-    }
-    return ` (${result.join(', ')})`;
-};
+// const flags = (user: RoomUser) => {
+//     const result: string[] = [];
+//     if (user.you) {
+//         result.push('You');
+//     }
+//     if (user.owner) {
+//         result.push('Owner');
+//     }
+//     if (user.streaming) {
+//         result.push('Streaming');
+//     }
+//     if (!result.length) {
+//         return '';
+//     }
+//     return ` (${result.join(', ')})`;
+// };
 
 interface FullScreenHTMLVideoElement extends HTMLVideoElement {
     msRequestFullscreen?: () => void;
@@ -82,13 +75,13 @@ export const Room = ({
     const [open, setOpen] = React.useState(false);
     const {enqueueSnackbar} = useSnackbar();
     const [settings, setSettings] = useSettings();
-    const [showControl, setShowControl] = React.useState(true);
-    const [hoverControl, setHoverControl] = React.useState(false);
+    // const [showControl, setShowControl] = React.useState(true);
+    // const [hoverControl, setHoverControl] = React.useState(false);
     const [selectedStream, setSelectedStream] = React.useState<string | typeof HostStream>();
     const [videoElement, setVideoElement] = React.useState<FullScreenHTMLVideoElement | null>(null);
-    const [imageIndex, setImageIndex] = React.useState(Math.floor(Math.random() * images.length))
+    const [imageIndex, ] = React.useState(Math.floor(Math.random() * images.length))
 
-    useShowOnMouseMovement(setShowControl);
+    // useShowOnMouseMovement(setShowControl);
 
     const handleFullscreen = useCallback(() => requestFullscreen(videoElement), [videoElement]);
 
@@ -136,19 +129,19 @@ export const Room = ({
         );
     };
 
-    const setHoverState = React.useMemo(
-        () => ({
-            onMouseLeave: () => setHoverControl(false),
-            onMouseEnter: () => setHoverControl(true),
-        }),
-        [setHoverControl]
-    );
+    // const setHoverState = React.useMemo(
+    //     () => ({
+    //         onMouseLeave: () => setHoverControl(false),
+    //         onMouseEnter: () => setHoverControl(true),
+    //     }),
+    //     [setHoverControl]
+    // );
 
     const leaveRoom = () => {
         location.href = "/"
     }
 
-    const controlVisible = showControl || open || hoverControl;
+    // const controlVisible = showControl || open || hoverControl;
 
     useHotkeys('s', () => (state.hostStream ? stopShare() : share()), [state.hostStream]);
     useHotkeys(
@@ -219,7 +212,7 @@ export const Room = ({
     return (
         <div className={classes.videoContainer}>
             {(!create) && (
-                <Paper className={classes.title} elevation={10} {...setHoverState} sx={{textAlign: "center"}}>
+                <Paper className={classes.title} elevation={10} sx={{textAlign: "center"}}>
                     <Typography
                         variant="h4"
                         component="h4"
@@ -383,69 +376,69 @@ export const Room = ({
     );
 };
 
-const useShowOnMouseMovement = (doShow: (s: boolean) => void) => {
-    const timeoutHandle = React.useRef(0);
+// const useShowOnMouseMovement = (doShow: (s: boolean) => void) => {
+//     const timeoutHandle = React.useRef(0);
 
-    React.useEffect(() => {
-        const update = () => {
-            if (timeoutHandle.current === 0) {
-                doShow(true);
-            }
+//     React.useEffect(() => {
+//         const update = () => {
+//             if (timeoutHandle.current === 0) {
+//                 doShow(true);
+//             }
 
-            clearTimeout(timeoutHandle.current);
-            timeoutHandle.current = window.setTimeout(() => {
-                timeoutHandle.current = 0;
-                doShow(false);
-            }, 1000);
-        };
-        window.addEventListener('mousemove', update);
-        return () => window.removeEventListener('mousemove', update);
-    }, [doShow]);
+//             clearTimeout(timeoutHandle.current);
+//             timeoutHandle.current = window.setTimeout(() => {
+//                 timeoutHandle.current = 0;
+//                 doShow(false);
+//             }, 1000);
+//         };
+//         window.addEventListener('mousemove', update);
+//         return () => window.removeEventListener('mousemove', update);
+//     }, [doShow]);
 
-    React.useEffect(
-        () =>
-            void (timeoutHandle.current = window.setTimeout(() => {
-                timeoutHandle.current = 0;
-                doShow(false);
-            }, 1000)),
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-        []
-    );
-};
+//     React.useEffect(
+//         () =>
+//             void (timeoutHandle.current = window.setTimeout(() => {
+//                 timeoutHandle.current = 0;
+//                 doShow(false);
+//             }, 1000)),
+//         // eslint-disable-next-line react-hooks/exhaustive-deps
+//         []
+//     );
+// };
 
-const AudioControl = ({video}: {video: FullScreenHTMLVideoElement}) => {
-    // this is used to force a rerender
-    const [, setMuted] = React.useState<boolean>();
+// const AudioControl = ({video}: {video: FullScreenHTMLVideoElement}) => {
+//     // this is used to force a rerender
+//     const [, setMuted] = React.useState<boolean>();
 
-    React.useEffect(() => {
-        const handler = () => setMuted(video.muted);
-        video.addEventListener('volumechange', handler);
-        setMuted(video.muted);
-        return () => video.removeEventListener('volumechange', handler);
-    });
+//     React.useEffect(() => {
+//         const handler = () => setMuted(video.muted);
+//         video.addEventListener('volumechange', handler);
+//         setMuted(video.muted);
+//         return () => video.removeEventListener('volumechange', handler);
+//     });
 
-    return (
-        <Stack spacing={0.5} direction="row" sx={{alignItems: 'center', my: 1, height: 35, pr: 2}}>
-            <IconButton size="large" onClick={() => (video.muted = !video.muted)}>
-                {video.muted ? (
-                    <VolumeMuteIcon fontSize="large" />
-                ) : (
-                    <VolumeIcon fontSize="large" />
-                )}
-            </IconButton>
-            <Slider
-                min={0}
-                max={1}
-                step={0.01}
-                defaultValue={video.volume}
-                onChange={(_, newVolume) => {
-                    video.muted = false;
-                    video.volume = newVolume;
-                }}
-            />
-        </Stack>
-    );
-};
+//     return (
+//         <Stack spacing={0.5} direction="row" sx={{alignItems: 'center', my: 1, height: 35, pr: 2}}>
+//             <IconButton size="large" onClick={() => (video.muted = !video.muted)}>
+//                 {video.muted ? (
+//                     <VolumeMuteIcon fontSize="large" />
+//                 ) : (
+//                     <VolumeIcon fontSize="large" />
+//                 )}
+//             </IconButton>
+//             <Slider
+//                 min={0}
+//                 max={1}
+//                 step={0.01}
+//                 defaultValue={video.volume}
+//                 onChange={(_, newVolume) => {
+//                     video.muted = false;
+//                     video.volume = newVolume;
+//                 }}
+//             />
+//         </Stack>
+//     );
+// };
 
 const useStyles = makeStyles()(() => ({
     idleDiv: {
