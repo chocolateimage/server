@@ -51,13 +51,13 @@ const requestFullscreen = (element: FullScreenHTMLVideoElement | null) => {
 };
 
 const images = [
-    ["tino-rischawy-n89lLdDUBM4-unsplash.jpg", "Tino Rischawy"],
-    ["declan-sun-yvfs-glPFgY-unsplash.jpg", "Declan Sun"],
-    ["joel-holland-TRhGEGdw-YY-unsplash.jpg", "Joel Holland"],
-    ["ryuta-AoIXSTI9yT8-unsplash.jpg", "Ryuta"],
-    ["sam-ferrara-1527pjeb6jg-unsplash.jpg", "Sam Ferrara"],
-    ["luke-robinson-esOlM9F7KM0-unsplash.jpg", "Luke Robinson"],
-    ["jeffrey-hamilton-JtVyK2Sej2I-unsplash.jpg", "Jeffrey Hamilton"],
+    ["/assets/tino-rischawy-n89lLdDUBM4-unsplash.jpg", "Tino Rischawy"],
+    ["/assets/declan-sun-yvfs-glPFgY-unsplash.jpg", "Declan Sun"],
+    ["/assets/joel-holland-TRhGEGdw-YY-unsplash.jpg", "Joel Holland"],
+    ["/assets/ryuta-AoIXSTI9yT8-unsplash.jpg", "Ryuta"],
+    ["/assets/sam-ferrara-1527pjeb6jg-unsplash.jpg", "Sam Ferrara"],
+    ["/assets/luke-robinson-esOlM9F7KM0-unsplash.jpg", "Luke Robinson"],
+    ["/assets/jeffrey-hamilton-JtVyK2Sej2I-unsplash.jpg", "Jeffrey Hamilton"],
 ];
 
 export const Room = ({
@@ -249,7 +249,7 @@ export const Room = ({
                                     Nicht mehr teilen
                                 </Button></div>)}
                 </Typography> : <div className={classes.idleDiv}>
-                    <img className={classes.idleBgImage} src={"/" + images[imageIndex][0]}></img>
+                    <img className={classes.idleBgImage} src={images[imageIndex][0]}></img>
                     <div className={classes.idleAttribution}>Foto von {images[imageIndex][1]} auf Unsplash</div>
                     <div className={classes.idleLeftSide}>
                         <h1 className={classes.idleTitle}>Bereit für die Bildschirmfreigabe</h1>
